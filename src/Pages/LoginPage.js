@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,7 +11,8 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import {UserContext} from '../contexts/UserContext'
 
 function Copyright(props) {
     return (
@@ -26,13 +27,20 @@ function Copyright(props) {
     );
 }
 
-const theme = createTheme();
-
 export default function SignIn() {
+
+    const [userContext, setUserContext] = React.useContext(UserContext);
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        // eslint-disable-next-line no-console
+        
+        axios.post('https://gisthub-backend.herokuapp.com/login', {email: data.get('email'), password: data.get('password')})
+        .then(response => {
+            setUserContext({user: response.data})
+        })
+        .catch(err => console.log(err))
+
         console.log({
             email: data.get('email'),
             password: data.get('password'),
@@ -40,7 +48,6 @@ export default function SignIn() {
     };
 
     return (
-        <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
@@ -101,6 +108,5 @@ export default function SignIn() {
                 </Box>
                 <Copyright sx={{ mt: 8, mb: 4 }} />
             </Container>
-        </ThemeProvider>
     );
 }
