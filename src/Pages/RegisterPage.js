@@ -41,7 +41,7 @@ export default function SignUp() {
         const data = new FormData(event.currentTarget);
         // eslint-disable-next-line no-console
         
-        axios.post('https://gisthub-backend.herokuapp.com/register', {email: data.get('email'), password: data.get('password')})
+        axios.post('https://gisthub-backend.herokuapp.com/register', {username: data.get('username'), password: data.get('password'), email: data.get('email'), firstName: data.get('firstName'), lastName: data.get('lastName')})
         .then(response => {
             setUserContext({user: response.data})
         })
@@ -91,6 +91,16 @@ export default function SignUp() {
                                 label="Last Name"
                                 name="lastName"
                                 autoComplete="lname"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                id="username"
+                                label="Username"
+                                name="username"
+                                autoComplete="username"
                             />
                         </Grid>
                         <Grid item xs={12}>

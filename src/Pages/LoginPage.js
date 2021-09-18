@@ -35,14 +35,14 @@ export default function SignIn() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         
-        axios.post('https://gisthub-backend.herokuapp.com/login', {email: data.get('email'), password: data.get('password')})
+        axios.post('https://gisthub-backend.herokuapp.com/login', {username: data.get('username'), password: data.get('password')})
         .then(response => {
             setUserContext({user: response.data})
         })
         .catch(err => console.log(err))
 
         console.log({
-            email: data.get('email'),
+            username: data.get('username'),
             password: data.get('password'),
         });
     };
@@ -69,10 +69,10 @@ export default function SignIn() {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
                             autoFocus
                         />
                         <TextField

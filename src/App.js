@@ -26,8 +26,8 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route exact path={'/login'} component={Login} />
-        <Route exact path={'/register'} component={Register} />
+        <Route exact path={'/login'} render={() => {return userContext.user ? <Redirect to="/code"/> : <Login/>}} />
+        <Route exact path={'/register'} render={() => {return userContext.user ? <Redirect to="/code"/> : <Register/>}} />
         <Route exact path={'/code'} component={AddGist} />
       </Switch>
     </Router>
