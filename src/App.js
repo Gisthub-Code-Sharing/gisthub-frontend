@@ -1,9 +1,11 @@
 import './App.css';
-import React, {useContext} from 'react';
-import {UserContext} from './contexts/UserContext';
+import React, { useContext } from 'react';
+import { UserContext } from './contexts/UserContext';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Login from './Pages/LoginPage';
 import Register from './Pages/RegisterPage';
+import AddGist from './Pages/AddGist';
+
 import TestComponent from './Pages/TestComponent'
 import axios from "axios";
 function App() {
@@ -13,19 +15,20 @@ function App() {
   axios.interceptors.response.use(
     response => response,
     error => {
-        const {status} = error.response;
-        if (status === UNAUTHORIZED) {
-            setUserContext({user: undefined});
-            window.reload();
-        }
-        return Promise.reject(error);
+      const { status } = error.response;
+      if (status === UNAUTHORIZED) {
+        setUserContext({ user: undefined });
+        window.reload();
+      }
+      return Promise.reject(error);
     }
   );
   return (
     <Router>
       <Switch>
-        <Route path={'/login'} render={() => {return userContext.user ? <Redirect to="/testing"/> : <Login/>}} />
-        <Route path={'/register'} render={() => {return userContext.user ? <Redirect to="/testing"/> : <Register/>}} />
+        <Route exact path={'/login'} component={Login} />
+        <Route exact path={'/register'} component={Register} />
+        <Route exact path={'/code'} component={AddGist} />
       </Switch>
     </Router>
   );
