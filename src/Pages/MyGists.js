@@ -54,11 +54,11 @@ export default function ViewGistsPage() {
   return (
     <>
       <div style={{ display: "flex", height: "100vh" }}>
-        <div style={{ flex: "1", padding: "50px", flexDirection: "column" }}>
-          <Avatar {...stringAvatar(name)} style={{ margin: "auto", marginBottom: "20px" }} />
+        <div style={{ flex: "1", display: 'flex', padding: "50px", flexDirection: "column", alignItems: "center" }}>
+          <Avatar {...stringAvatar(name)} style={{ marginBottom: "20px" }} />
           <Typography variant="h4" >{name}</Typography>
-          <Typography variant="h5" >{userContext.user.userName}</Typography>
-          <Typography variant="subtitle1" >{gistsData.length} gists</Typography>
+          <Typography variant="h5" >@{userContext.user.userName}</Typography>
+          <Typography variant="subtitle1">{gistsData.length} gists</Typography>
         </div>
         <Paper style={{ flex: "3", padding: "20px", backgroundColor: "rgb(242, 242, 242, 0.4)", borderRadius: 0 }}>
           <Typography variant="h5">Your gists</Typography>
