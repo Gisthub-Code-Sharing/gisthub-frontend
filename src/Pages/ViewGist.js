@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Code from '../Components/EditCodeComponent';
 import ViewCode from '../Components/ViewCodeComponent';
 import ViewText from '../Components/ViewTextComponent';
-import Title from '../Components/EditTitleComponent';
+import ViewTitle from '../Components/EditTitleComponent';
 import { Button } from '@mui/material';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import CodeIcon from '@mui/icons-material/Code';
@@ -10,12 +10,16 @@ import SaveIcon from '@mui/icons-material/Save';
 import ShareModal from '../Components/ShareModal';
 import Modal from '@mui/material/Modal';
 import axios from 'axios';
+import { UserContext } from '../contexts/UserContext';
+import { useParams } from 'react-router-dom';
 
 function ViewGist() {
     const [open, setOpen] = useState(false);
     const [items, setItems] = useState([{ type: "Code", payload: "let" }, { type: "Text", payload: "" }]) // {type: "Code" or "Text", payload: string, language: string} 
     // TODO: Add different language support
     const [title, setTitle] = useState("");
+    const [userContext, setUserContext] = useContext(UserContext);
+    const { id } = useParams();
 
     const handleClose = () => setOpen(false);
 
@@ -36,10 +40,20 @@ function ViewGist() {
         setItems(items.concat(EMPTY_TEXT));
     }
 
+    useEffect(() => {
+        if (id) {
+            axios.post('https://gisthub-backend.herokuapp.com/viewGist', { user: userContext.user, gistId: id }).then(response => {
+                let { gist } = response.data;
+                setTitle(gist.title || "");
+                setItems(gist.content || []);
+            }).catch(err => console.log(err))
+        }
+    }, [id])
+
     return (
         <div style={{ margin: 50 }}>
             <div style={{ display: "flex", alignItems: "center" }}>
-                <Title title={title} setTitle={setTitle}></Title>
+                <ViewTitle title={title}></ViewTitle>
                 {/* TODO: Add an edit button to move to AddGist page if owner */}
             </div>
 
@@ -53,7 +67,6 @@ function ViewGist() {
                     }
                 })
             }
-            <ViewText payload="Hello" />
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <Button variant="contained" startIcon={<TextFieldsIcon />} onClick={addText}>Add Text</Button>
                 <Button variant="contained" startIcon={<CodeIcon />} style={{ marginLeft: 20 }} onClick={addCode}>Add Code</Button>
