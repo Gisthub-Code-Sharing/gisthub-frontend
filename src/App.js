@@ -13,7 +13,6 @@ import NavbarComponent from "./Pages/NavbarComponent"
 import axios from "axios"
 import HomePage from "./Pages/HomePage"
 import ViewGistsPage from "./Pages/MyGists"
-import NotAllowedPage from "./Components/NotAllowedComponent"
 
 function App() {
   const [userContext, setUserContext] = useContext(UserContext)
@@ -60,8 +59,6 @@ function App() {
           <Route exact path={"/viewGist/:id"} component={ViewGist} />
           <Route exact path={"/"} component={HomePage} />
           <Route exact path={"/viewGists"} component={ViewGistsPage} />
-          <Route exact path={"/no"} component={NotAllowedPage} />
-
         </Switch>
       </div>
     </Router>
