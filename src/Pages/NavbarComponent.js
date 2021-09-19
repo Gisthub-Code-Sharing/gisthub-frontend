@@ -36,18 +36,14 @@ export default function NavbarComponent({ isLoggedIn, drawerWidth }) {
         position='static'
       >
         <Toolbar>
-          <IconButton
-            size='large'
-            edge='start'
-            color='inherit'
-            aria-label='menu'
-            sx={{ mr: 2 }}
-          ></IconButton>
-          <Typography variant='h6' component='div' sx={{ color: "white", flexGrow: 1 }}>
-            <Link to='/'>
-              Gisthub
-            </Link>
-          </Typography>
+          <div style={{ flex: "1" }}>
+            <Button href='/' sx={{ color: "white" }}>
+              <Typography variant='h5' component='div' sx={{ color: "white", flexGrow: 1, textTransform: "none" }}>
+                Gisthub
+              </Typography>
+            </Button>
+          </div>
+
           {userContext.user ? (
             <>
               <Button href='/viewGists' sx={{ color: "white" }}>View my gists</Button>
