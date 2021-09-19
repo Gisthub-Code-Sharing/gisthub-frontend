@@ -13,6 +13,7 @@ import Modal from '@mui/material/Modal';
 import axios from 'axios';
 import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
+import NotAllowedComponent from '../Components/NotAllowedComponent';
 
 function AddGist() {
     const [open, setOpen] = useState(false);
@@ -21,6 +22,7 @@ function AddGist() {
     const [title, setTitle] = useState("");
     const [userContext, setUserContext] = useContext(UserContext);
     const { id } = useParams();
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -28,7 +30,7 @@ function AddGist() {
                 let { gist } = response.data;
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
-            }).catch(err => console.log(err))
+            }).catch(err => { console.log(err); if (err.response.status === 403) { setError(true) }; })
         }
     }, [id])
 
@@ -56,40 +58,42 @@ function AddGist() {
     }
 
     return (
-        <div style={{ margin: 50 }}>
-            <div style={{ display: "flex", alignItems: "center" }}>
-                <Title title={title} setTitle={setTitle}></Title>
-                <Button variant="contained" startIcon={<ShareIcon />} onClick={() => setOpen(true)}>
-                    Share
-                </Button>
-                <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave} style={{ marginLeft: 10 }}>
-                    Save
-                </Button>
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <ShareModal isPrivate={true} invited={['invited1', 'invited2']} />
-                </Modal>
-            </div>
+        error ?
+            <NotAllowedComponent /> :
+            (<div style={{ margin: 50 }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    <Title title={title} setTitle={setTitle}></Title>
+                    <Button variant="contained" startIcon={<ShareIcon />} onClick={() => setOpen(true)}>
+                        Share
+                    </Button>
+                    <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave} style={{ marginLeft: 10 }}>
+                        Save
+                    </Button>
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <ShareModal isPrivate={true} invited={['invited1', 'invited2']} />
+                    </Modal>
+                </div>
 
-            {
-                items.map((item, index) => {
-                    const { type, payload } = item
-                    if (type === "Code") {
-                        return <Code payload={payload} onCodeChange={(payload) => handleChange(payload, index)} />
-                    } else {
-                        return <Text payload={payload} onTextChange={(payload) => handleChange(payload, index)} />
-                    }
-                })
-            }
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button variant="contained" startIcon={<TextFieldsIcon />} onClick={addText}>Add Text</Button>
-                <Button variant="contained" startIcon={<CodeIcon />} style={{ marginLeft: 20 }} onClick={addCode}>Add Code</Button>
-            </div>
-        </div>
+                {
+                    items.map((item, index) => {
+                        const { type, payload } = item
+                        if (type === "Code") {
+                            return <Code payload={payload} onCodeChange={(payload) => handleChange(payload, index)} />
+                        } else {
+                            return <Text payload={payload} onTextChange={(payload) => handleChange(payload, index)} />
+                        }
+                    })
+                }
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Button variant="contained" startIcon={<TextFieldsIcon />} onClick={addText}>Add Text</Button>
+                    <Button variant="contained" startIcon={<CodeIcon />} style={{ marginLeft: 20 }} onClick={addCode}>Add Code</Button>
+                </div>
+            </div>)
     )
 }
 

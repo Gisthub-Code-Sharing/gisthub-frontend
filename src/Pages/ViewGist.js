@@ -12,6 +12,7 @@ import Modal from '@mui/material/Modal';
 import axios from 'axios';
 import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
+import NotAllowedComponent from '../Components/NotAllowedComponent';
 
 function ViewGist() {
     const [open, setOpen] = useState(false);
@@ -20,6 +21,7 @@ function ViewGist() {
     const [title, setTitle] = useState("");
     const [userContext, setUserContext] = useContext(UserContext);
     const { id } = useParams();
+    const [error, setError] = useState(false);
 
     const handleClose = () => setOpen(false);
 
@@ -46,32 +48,33 @@ function ViewGist() {
                 let { gist } = response.data;
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
-            }).catch(err => console.log(err))
+            }).catch(err => { console.log(err); if (err.response.status === 403) { setError(true) }; })
         }
     }, [id])
 
     return (
-        <div style={{ margin: 50 }}>
-            <div style={{ display: "flex", alignItems: "center" }}>
-                <ViewTitle title={title}></ViewTitle>
-                {/* TODO: Add an edit button to move to AddGist page if owner */}
-            </div>
+        error ? <NotAllowedComponent /> :
+            (<div style={{ margin: 50 }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    <ViewTitle title={title}></ViewTitle>
+                    {/* TODO: Add an edit button to move to AddGist page if owner */}
+                </div>
 
-            {
-                items.map((item, index) => {
-                    const { type, payload } = item
-                    if (type === "Code") {
-                        return <ViewCode payload={payload} />
-                    } else {
-                        return <ViewText payload={payload} />
-                    }
-                })
-            }
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button variant="contained" startIcon={<TextFieldsIcon />} onClick={addText}>Add Text</Button>
-                <Button variant="contained" startIcon={<CodeIcon />} style={{ marginLeft: 20 }} onClick={addCode}>Add Code</Button>
-            </div>
-        </div>
+                {
+                    items.map((item, index) => {
+                        const { type, payload } = item
+                        if (type === "Code") {
+                            return <ViewCode payload={payload} />
+                        } else {
+                            return <ViewText payload={payload} />
+                        }
+                    })
+                }
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Button variant="contained" startIcon={<TextFieldsIcon />} onClick={addText}>Add Text</Button>
+                    <Button variant="contained" startIcon={<CodeIcon />} style={{ marginLeft: 20 }} onClick={addCode}>Add Code</Button>
+                </div>
+            </div>)
     )
 }
 
