@@ -12,7 +12,7 @@ import Modal from '@mui/material/Modal';
 import axios from 'axios';
 import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
-import NotAllowedComponent from '../Components/NotAllowedComponent';
+import ErrorPage from './ErrorPage';
 
 function ViewGist() {
     const [open, setOpen] = useState(false);
@@ -48,12 +48,12 @@ function ViewGist() {
                 let { gist } = response.data;
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
-            }).catch(err => { console.log(err); if (err.response.status === 403) { setError(true) }; })
+            }).catch(err => { console.log(err); setError(err.response.status); })
         }
     }, [id])
 
     return (
-        error ? <NotAllowedComponent /> :
+        error ? <ErrorPage status={error} /> :
             (<div style={{ margin: 50 }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <ViewTitle title={title}></ViewTitle>

@@ -13,7 +13,7 @@ import Modal from '@mui/material/Modal';
 import axios from 'axios';
 import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
-import NotAllowedComponent from '../Components/NotAllowedComponent';
+import ErrorPage from './ErrorPage';
 
 function AddGist() {
     const [open, setOpen] = useState(false);
@@ -24,7 +24,7 @@ function AddGist() {
     const [isPrivate, setIsPrivate] = useState(true);
     const [userContext, setUserContext] = useContext(UserContext);
     const { id } = useParams();
-    const [error, setError] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (id) {
@@ -33,7 +33,7 @@ function AddGist() {
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
                 setPermissions(gist.permissions || []);
-            }).catch(err => { console.log(err); setError(err.response.status === 403); })
+            }).catch(err => { console.log(err); setError(err.response.status); })
         }
     }, [id])
 
@@ -62,7 +62,7 @@ function AddGist() {
 
     return (
         error ?
-            <NotAllowedComponent /> :
+            <ErrorPage status={error} /> :
             (<div style={{ margin: 50 }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <Title title={title} setTitle={setTitle}></Title>
@@ -78,7 +78,7 @@ function AddGist() {
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     >
-                        <ShareModal isPrivate={isPrivate} setIsPrivate={setIsPrivate} invited={permissions} setInvited={setPermissions}/>
+                        <ShareModal isPrivate={isPrivate} setIsPrivate={setIsPrivate} invited={permissions} setInvited={setPermissions} />
                     </Modal>
                 </div>
 
