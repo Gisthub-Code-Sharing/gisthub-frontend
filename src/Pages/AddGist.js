@@ -17,7 +17,7 @@ import ErrorPage from './ErrorPage';
 
 function AddGist() {
     const [open, setOpen] = useState(false);
-    const [items, setItems] = useState([{ type: "Code", payload: "let" }, { type: "Text", payload: "" }]) // {type: "Code" or "Text", payload: string, language: string} 
+    const [items, setItems] = useState([]) // {type: "Code" or "Text", payload: string, language: string} 
     // TODO: Add different language support
     const [title, setTitle] = useState("");
     const [permissions, setPermissions] = useState([]);
