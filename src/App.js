@@ -11,7 +11,7 @@ import './Themes/prism-one-light.css';
 import TestComponent from "./Pages/TestComponent"
 import axios from "axios"
 import HomePage from "./Pages/HomePage"
-import ViewGistsPage from "./Pages/ViewGistsPage"
+import ViewGistsPage from "./Pages/MyGists"
 
 function App() {
   const [userContext, setUserContext] = useContext(UserContext)
