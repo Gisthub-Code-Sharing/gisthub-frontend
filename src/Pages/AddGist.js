@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Code from '../Components/EditCodeComponent';
 import Text from '../Components/EditTextComponent';
 import ViewText from '../Components/ViewTextComponent';
@@ -11,12 +11,26 @@ import SaveIcon from '@mui/icons-material/Save';
 import ShareModal from '../Components/ShareModal';
 import Modal from '@mui/material/Modal';
 import axios from 'axios';
+import { UserContext } from '../contexts/UserContext';
+import { useParams } from 'react-router-dom';
 
 function AddGist() {
     const [open, setOpen] = useState(false);
     const [items, setItems] = useState([{ type: "Code", payload: "let" }, { type: "Text", payload: "" }]) // {type: "Code" or "Text", payload: string, language: string} 
     // TODO: Add different language support
     const [title, setTitle] = useState("");
+    const [userContext, setUserContext] = useContext(UserContext);
+    const { id } = useParams();
+
+    useEffect(() => {
+        if (id) {
+            axios.post('https://gisthub-backend.herokuapp.com/viewGist', { user: userContext.user, gistId: id }).then(response => {
+                let { gist } = response.data;
+                setTitle(gist.title || "");
+                setItems(gist.content || []);
+            }).catch(err => console.log(err))
+        }
+    }, [id])
 
     const handleClose = () => setOpen(false);
 
@@ -27,7 +41,7 @@ function AddGist() {
     }
 
     const handleSave = () => {
-        axios.post('https://gisthub-backend.herokuapp.com/createGist', { title, content: items }).then(response => console.log(response)).catch(err => console.log(err))
+        axios.post('https://gisthub-backend.herokuapp.com/updateGist', { title, content: items, user: userContext.user, gistId: id }).then(response => console.log(response)).catch(err => console.log(err))
     }
 
     const EMPTY_CODE = { type: "Code", payload: "" };
