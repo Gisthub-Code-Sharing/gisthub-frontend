@@ -119,7 +119,7 @@ function PrivateShareModal(props) {
                         </IconButton>
                     </div>))}
             </List>
-            <Button variant="outlined" onClick={() => navigator.clipboard.writeText('http://localhost:3000/viewGist/' + id)}>Get link</Button>
+            <Button variant="outlined" onClick={() => navigator.clipboard.writeText('https://gisthub-rho.vercel.app/viewGist/' + id)}>Get link</Button>
             <Button variant="outlined" style={{ marginLeft: 10 }} onClick={handleMakePublic}>Make public</Button>
         </Paper >
     )
