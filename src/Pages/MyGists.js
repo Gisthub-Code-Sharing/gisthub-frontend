@@ -7,9 +7,11 @@ import {
   CardActionArea,
   CardActions,
   Button,
+  Tab
 } from "@mui/material"
 import axios from "axios"
 import { UserContext } from "../contexts/UserContext"
+import Link from '@mui/material/Link';
 
 function stringToColor(string) {
   let hash = 0
@@ -44,9 +46,11 @@ function stringAvatar(name) {
 }
 
 export default function ViewGistsPage() {
-  const [gistsData, setGistsData] = useState([])
+  const [gistsData, setGistsData] = useState([]);
+  const [sharedData, setSharedData] = useState([]);
 
   const [userContext, setUserContext] = useContext(UserContext)
+  const [sharedWithMe, setSharedWithMe] = useState(false);
 
   const name = `${userContext.user.firstName} ${userContext.user.lastName}`
 
@@ -56,9 +60,9 @@ export default function ViewGistsPage() {
         user: userContext.user,
       })
       .then((response) => {
-        let { gists } = response.data
-        setGistsData(gists)
-        console.log(gists)
+        let { gists, sharedWithMe } = response.data
+        setGistsData(gists);
+        setSharedData(sharedWithMe);
       })
       .catch((err) => {
         console.log(err)
@@ -100,9 +104,46 @@ export default function ViewGistsPage() {
             borderRadius: 0,
           }}
         >
-          <Typography variant='h4'>Your gists</Typography>
+          {!sharedWithMe && (
+            <>
+              <Typography display="inline" variant='h4' sx={{ textTransform: "none" }}>My gists / </Typography>
+              <Link onClick={() => setSharedWithMe(true)}>
+                <Typography display="inline" variant='h4' sx={{ textTransform: "none" }}>Shared with me</Typography>
+              </Link>
+            </>
+          )}
+          {sharedWithMe && (
+            <>
+              <Link onClick={() => setSharedWithMe(false)}>
+                <Typography display="inline" variant='h4' sx={{ textTransform: "none" }}>My gists</Typography>
+              </Link>
+              <Typography display="inline" variant='h4' sx={{ textTransform: "none" }}> / Shared with me</Typography>
+            </>
+          )}
+          {/* <Button variant="outlined" disabled={!sharedWithMe} onClick={() => setSharedWithMe(false)}> <Typography variant='h4' sx={{ textTransform: "none" }}>My gists</Typography></Button><Typography variant='h4' sx={{ display: "inline" }}>/</Typography>
+          <Button variant="outlined" disabled={sharedWithMe} onClick={() => setSharedWithMe(true)}><Typography variant='h4' sx={{ textTransform: "none" }}>Shared with me</Typography></Button> */}
 
-          {gistsData.map((gist) => (
+          {sharedWithMe && sharedData.map((gist) => (
+            <Card variant='outlined' style={{ margin: "10px" }}>
+              <Typography
+                variant='h6'
+                style={{ paddingLeft: "15px", paddingTop: "10px" }}
+              >
+                {gist.title}
+              </Typography>
+
+              <CardActionArea
+                href={`/viewGist/${gist._id}`}
+                style={{ padding: "10px" }}
+              >
+                {" "}
+                <CardActions>
+                  <Button size='small'>View This Gist</Button>
+                </CardActions>
+              </CardActionArea>
+            </Card>
+          ))}
+          {!sharedWithMe && gistsData.map((gist) => (
             <Card variant='outlined' style={{ margin: "10px" }}>
               <Typography
                 variant='h6'
