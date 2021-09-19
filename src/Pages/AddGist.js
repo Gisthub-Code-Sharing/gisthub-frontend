@@ -33,6 +33,7 @@ function AddGist() {
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
                 setPermissions(gist.permissions || []);
+                setIsPrivate(gist.isPrivate);
             }).catch(err => { console.log(err); setError(err.response.status); })
         }
     }, [id])
