@@ -1,15 +1,12 @@
+import React, { useContext } from 'react';
+import { UserContext } from './contexts/UserContext';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import Login from './Pages/LoginPage';
+import Register from './Pages/RegisterPage';
+import AddGist from './Pages/AddGist';
+import ViewGist from './Pages/ViewGist';
 import "./App.css"
-import React, { useContext } from "react"
-import { UserContext } from "./contexts/UserContext"
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-} from "react-router-dom"
-import Login from "./Pages/LoginPage"
-import Register from "./Pages/RegisterPage"
-import AddGist from "./Pages/AddGist"
+import './Themes/prism-one-light.css';
 
 import TestComponent from "./Pages/TestComponent"
 import axios from "axios"
@@ -56,7 +53,7 @@ function App() {
           }}
         />
         <Route exact path={"/editGist/:id"} component={AddGist} />
-
+        <Route exact path={"/viewGist/:id"} component={ViewGist} />
         <Route exact path={"/"} component={HomePage} />
         <Route exact path={"/viewGists"} component={ViewGistsPage} />
       </Switch>

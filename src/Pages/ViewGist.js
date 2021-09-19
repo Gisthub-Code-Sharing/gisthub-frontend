@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import Code from '../Components/EditCodeComponent';
-import Text from '../Components/EditTextComponent';
+import ViewCode from '../Components/ViewCodeComponent';
 import ViewText from '../Components/ViewTextComponent';
-import Title from '../Components/EditTitleComponent';
+import ViewTitle from '../Components/ViewTitleComponent';
 import { Button } from '@mui/material';
-import ShareIcon from '@mui/icons-material/Share';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import CodeIcon from '@mui/icons-material/Code';
 import SaveIcon from '@mui/icons-material/Save';
@@ -15,26 +14,14 @@ import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
 import NotAllowedComponent from '../Components/NotAllowedComponent';
 
-function AddGist() {
+function ViewGist() {
     const [open, setOpen] = useState(false);
     const [items, setItems] = useState([{ type: "Code", payload: "let" }, { type: "Text", payload: "" }]) // {type: "Code" or "Text", payload: string, language: string} 
     // TODO: Add different language support
     const [title, setTitle] = useState("");
-    const [permissions, setPermissions] = useState([])
     const [userContext, setUserContext] = useContext(UserContext);
     const { id } = useParams();
     const [error, setError] = useState(false);
-
-    useEffect(() => {
-        if (id) {
-            axios.post('https://gisthub-backend.herokuapp.com/viewGist', { user: userContext.user, gistId: id }).then(response => {
-                let { gist } = response.data;
-                setTitle(gist.title || "");
-                setItems(gist.content || []);
-                setPermissions(gist.permissions || []);
-            }).catch(err => { console.log(err); setError(err.response.status === 403); })
-        }
-    }, [id])
 
     const handleClose = () => setOpen(false);
 
@@ -42,10 +29,6 @@ function AddGist() {
         const newItems = [...items]
         items[index].payload = payload;
         setItems(newItems);
-    }
-
-    const handleSave = () => {
-        axios.post('https://gisthub-backend.herokuapp.com/updateGist', { title, content: items, user: userContext.user, gistId: id }).then(response => console.log(response)).catch(err => console.log(err))
     }
 
     const EMPTY_CODE = { type: "Code", payload: "" };
@@ -59,35 +42,31 @@ function AddGist() {
         setItems(items.concat(EMPTY_TEXT));
     }
 
+    useEffect(() => {
+        if (id) {
+            axios.post('https://gisthub-backend.herokuapp.com/viewGist', { user: userContext.user, gistId: id }).then(response => {
+                let { gist } = response.data;
+                setTitle(gist.title || "");
+                setItems(gist.content || []);
+            }).catch(err => { console.log(err); if (err.response.status === 403) { setError(true) }; })
+        }
+    }, [id])
+
     return (
-        error ?
-            <NotAllowedComponent /> :
+        error ? <NotAllowedComponent /> :
             (<div style={{ margin: 50 }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                    <Title title={title} setTitle={setTitle}></Title>
-                    <Button variant="contained" startIcon={<ShareIcon />} onClick={() => setOpen(true)}>
-                        Share
-                    </Button>
-                    <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave} style={{ marginLeft: 10 }}>
-                        Save
-                    </Button>
-                    <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    >
-                        <ShareModal isPrivate={true} invited={permissions} setInvited={setPermissions}/>
-                    </Modal>
+                    <ViewTitle title={title}></ViewTitle>
+                    {/* TODO: Add an edit button to move to AddGist page if owner */}
                 </div>
 
                 {
                     items.map((item, index) => {
                         const { type, payload } = item
                         if (type === "Code") {
-                            return <Code payload={payload} onCodeChange={(payload) => handleChange(payload, index)} />
+                            return <ViewCode payload={payload} />
                         } else {
-                            return <Text payload={payload} onTextChange={(payload) => handleChange(payload, index)} />
+                            return <ViewText payload={payload} />
                         }
                     })
                 }
@@ -99,4 +78,4 @@ function AddGist() {
     )
 }
 
-export default AddGist;
+export default ViewGist;
