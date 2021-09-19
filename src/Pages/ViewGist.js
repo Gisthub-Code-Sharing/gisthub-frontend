@@ -70,10 +70,6 @@ function ViewGist() {
                         }
                     })
                 }
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button variant="contained" startIcon={<TextFieldsIcon />} onClick={addText}>Add Text</Button>
-                    <Button variant="contained" startIcon={<CodeIcon />} style={{ marginLeft: 20 }} onClick={addCode}>Add Code</Button>
-                </div>
             </div>)
     )
 }
