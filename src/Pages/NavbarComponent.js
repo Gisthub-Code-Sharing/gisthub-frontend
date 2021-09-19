@@ -31,7 +31,7 @@ export default function NavbarComponent({ isLoggedIn, drawerWidth }) {
 
   const handleLogout = () => {
     setUserContext({})
-    Cookies.remove("auth_github")
+    Cookies.remove("auth_gisthub")
     history.push("/")
   }
 
