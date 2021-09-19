@@ -24,6 +24,8 @@ function ViewGist() {
     const { id } = useParams();
     const [error, setError] = useState(false);
     const [owner, setOwner] = useState(false);
+    const [isPrivate, setIsPrivate] = useState(true);
+    const [permissions, setPermissions] = useState([]);
 
     const handleClose = () => setOpen(false);
 
@@ -51,6 +53,8 @@ function ViewGist() {
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
                 setOwner(userContext.user.id === gist.owner.toString());
+                setIsPrivate(gist.isPrivate);
+                setPermissions(gist.permissions || []);
             }).catch(err => { console.log(err); setError(err.response.status); })
         }
     }, [id])
@@ -68,8 +72,15 @@ function ViewGist() {
                             <Button href={`/editGist/${id}`} variant="contained" startIcon={<EditIcon />} style={{ marginLeft: 10 }}>
                                 Edit
                             </Button>
+                            <Modal
+                                open={open}
+                                onClose={handleClose}
+                                aria-labelledby="modal-modal-title"
+                                aria-describedby="modal-modal-description"
+                            >
+                                <ShareModal isPrivate={isPrivate} setIsPrivate={setIsPrivate} invited={permissions} setInvited={setPermissions} />
+                            </Modal>
                         </>)}
-                    {/* TODO: Add an edit button to move to AddGist page if owner */}
                 </div>
 
                 {
