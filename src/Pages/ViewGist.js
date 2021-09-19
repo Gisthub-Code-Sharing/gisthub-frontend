@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import Code from '../Components/EditCodeComponent';
 import ViewCode from '../Components/ViewCodeComponent';
 import ViewText from '../Components/ViewTextComponent';
-import ViewTitle from '../Components/EditTitleComponent';
+import ViewTitle from '../Components/ViewTitleComponent';
 import { Button } from '@mui/material';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import CodeIcon from '@mui/icons-material/Code';

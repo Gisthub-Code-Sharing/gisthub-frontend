@@ -1,9 +1,9 @@
 import React from "react";
 import { Typography } from '@mui/material';
 
-function ViewTitleComponent(props) {
+function ViewTitleComponent({ title }) {
     return (
-        <Typography variant="h4">{props.text}</Typography>
+        <Typography variant="h4">{title}</Typography>
     )
 }
 
