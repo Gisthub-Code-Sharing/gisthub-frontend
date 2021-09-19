@@ -7,8 +7,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
-import {UserContext} from '../contexts/UserContext';
-import {useParams} from 'react-router-dom';
+import { UserContext } from '../contexts/UserContext';
+import { useParams } from 'react-router-dom';
 
 const style = {
     position: 'absolute',
@@ -24,56 +24,47 @@ const style = {
     borderRadius: 3
 };
 
-// replace with getUsers API
-function sleep(delay = 0) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, delay);
-    });
-}
-
 function PrivateShareModal(props) {
     const { invited, setInvited, isPrivate, setIsPrivate } = props;
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
-    const loading = open && options.length === 0;
+    const [allUsers, setAllUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [userContext, setUserContext] = useContext(UserContext);
-    const {id} = useParams();
+    const { id } = useParams();
+    const [flip, setFlip] = useState(false);
+
+    const myUsername = userContext.user.userName;
 
     const handleAddInvite = (userName) => {
-        axios.post('https://gisthub-backend.herokuapp.com/updateGist', {permissions: [...invited, userName], user: userContext.user, gistId: id}).then(response => console.log(response)).catch(err => console.log(err))
+        axios.post('https://gisthub-backend.herokuapp.com/updateGist', { permissions: [...invited, userName], user: userContext.user, gistId: id }).then(response => console.log(response)).catch(err => console.log(err))
         setInvited(invited.concat(userName));
+        // re-render AutoComplete component
+        setFlip(!flip);
+    }
+
+    const handleRemoveInvite = (userName) => {
+        axios.post('https://gisthub-backend.herokuapp.com/updateGist', { permissions: invited.filter(x => x !== userName), user: userContext.user, gistId: id }).then(response => console.log(response)).catch(err => console.log(err))
+        setInvited(invited.filter(x => x !== userName));
     }
 
     const handleMakePublic = () => {
-        axios.post('https://gisthub-backend.herokuapp.com/updateGist', {isPrivate: false, user: userContext.user, gistId: id}).then(response => console.log(response)).catch(err => console.log(err))
+        axios.post('https://gisthub-backend.herokuapp.com/updateGist', { isPrivate: false, user: userContext.user, gistId: id }).then(response => console.log(response)).catch(err => console.log(err))
         setIsPrivate(false);
     }
 
     useEffect(() => {
+        setLoading(true);
         axios.post('https://gisthub-backend.herokuapp.com/getAllUsers').then(response => {
-            setOptions(response.data.users);
+            setAllUsers(response.data.users);
+            setLoading(false);
         }).catch(err => console.log(err));
     }, [])
 
     useEffect(() => {
-        let active = true;
-
-        if (!loading) {
-            return undefined;
-        }
-
-        (async () => {
-            await sleep(1e3); // For demo purposes.
-
-            if (active) {
-                setOptions([...sampleEmails]);
-            }
-        })();
-
-        return () => {
-            active = false;
-        };
-    }, [loading]);
+        // only show users that have not been invited/ are not you
+        setOptions(allUsers.filter(x => invited.indexOf(x.userName) === -1 && x.userName !== myUsername));
+    }, [invited, allUsers]);
 
     return (
         <Paper sx={{ ...style }} >
@@ -89,6 +80,7 @@ function PrivateShareModal(props) {
             <Autocomplete
                 id="asynchronous-demo"
                 size="small"
+                key={flip}
                 open={open}
                 onOpen={() => {
                     setOpen(true);
@@ -99,7 +91,7 @@ function PrivateShareModal(props) {
                 // isOptionEqualToValue={(option, value) => option.title === value.title}
                 // getOptionLabel={(option) => option.title}
                 options={options}
-                ListboxProps={{onClick: (evt) => {handleAddInvite(evt.target.textContent)}}}
+                ListboxProps={{ onClick: (evt) => { handleAddInvite(evt.target.textContent) } }}
                 getOptionLabel={(option) => option.userName}
                 loading={loading}
                 renderInput={(params) => (
@@ -122,17 +114,15 @@ function PrivateShareModal(props) {
                 {invited.map(person => (
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <Typography>{person}</Typography>
-                        <IconButton edge="end" aria-label="delete">
+                        <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveInvite(person)}>
                             <DeleteIcon />
                         </IconButton>
                     </div>))}
             </List>
             <Button variant="outlined" onClick={() => navigator.clipboard.writeText('http://localhost:3000/viewGist/' + id)}>Get link</Button>
-            <Button variant="outlined" style={{marginLeft: 10}} onClick={handleMakePublic}>Make public</Button>
+            <Button variant="outlined" style={{ marginLeft: 10 }} onClick={handleMakePublic}>Make public</Button>
         </Paper >
     )
 }
-
-const sampleEmails = ['abc@def.com', 'def@abc.com']
 
 export default PrivateShareModal;
