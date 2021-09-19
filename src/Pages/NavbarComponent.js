@@ -1,4 +1,4 @@
-import React, {useContext} from "react"
+import React, { useContext } from "react"
 import AppBar from "@mui/material/AppBar"
 import Box from "@mui/material/Box"
 import Toolbar from "@mui/material/Toolbar"
@@ -7,20 +7,28 @@ import Button from "@mui/material/Button"
 import IconButton from "@mui/material/IconButton"
 import MenuIcon from "@mui/icons-material/Menu"
 import { Link } from "react-router-dom"
-import AddIcon from "@mui/icons-material/Add"
+import AddCircleIcon from "@mui/icons-material/AddCircle"
 import axios from 'axios';
-import {UserContext} from '../contexts/UserContext';
-import {useHistory} from 'react-router-dom';
+import { UserContext } from '../contexts/UserContext';
+import { useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 export default function NavbarComponent({ isLoggedIn, drawerWidth }) {
   const [userContext, setUserContext] = useContext(UserContext);
   const history = useHistory();
 
   const handleAddGist = () => {
-    axios.post('https://gisthub-backend.herokuapp.com/createGist', {user: userContext.user}).then(resp => {
+    axios.post('https://gisthub-backend.herokuapp.com/createGist', { user: userContext.user }).then(resp => {
       history.push('/editGist/' + resp.data.id);
     }).catch(err => console.log(err))
   }
+
+  const handleLogout = () => {
+    setUserContext({});
+    Cookies.remove('auth_github');
+    history.push('/');
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -35,20 +43,24 @@ export default function NavbarComponent({ isLoggedIn, drawerWidth }) {
             aria-label='menu'
             sx={{ mr: 2 }}
           ></IconButton>
-          <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-            Gisthub
+          <Typography variant='h6' component='div' sx={{ color: "white", flexGrow: 1 }}>
+            <Link to='/'>
+              Gisthub
+            </Link>
           </Typography>
-          {isLoggedIn ? (
+          {userContext.user ? (
             <>
-              <Button color='inherit'>View my gists</Button>
-              <IconButton onClick={handleAddGist}>
-                <AddIcon />
+              <Button href='/viewGists' sx={{ color: "white" }}>View my gists</Button>
+              <IconButton sx={{ color: "white" }} onClick={handleAddGist}>
+                <AddCircleIcon />
               </IconButton>
+              <Button sx={{ color: "white" }} onClick={() => handleLogout()}>Logout</Button>
             </>
           ) : (
-            <Link to='/login'>
-              <Button color='inherit'>Login</Button>
-            </Link>
+            <>
+              <Button href='/login' sx={{ color: "white" }} variant="text">Login</Button>
+              <Button href='/register' sx={{ color: "white" }} variant="text">Sign up</Button>
+            </>
           )}
         </Toolbar>
       </AppBar>

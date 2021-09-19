@@ -9,9 +9,11 @@ import "./App.css"
 import './Themes/prism-one-light.css';
 
 import TestComponent from "./Pages/TestComponent"
+import NavbarComponent from "./Pages/NavbarComponent"
 import axios from "axios"
 import HomePage from "./Pages/HomePage"
 import ViewGistsPage from "./Pages/MyGists"
+import NotAllowedPage from "./Components/NotAllowedComponent"
 
 function App() {
   const [userContext, setUserContext] = useContext(UserContext)
@@ -33,30 +35,35 @@ function App() {
   */
   return (
     <Router>
-      <Switch>
-        <Route
-          exact
-          path={"/login"}
-          render={() => {
-            return userContext.user ? <Redirect to='/viewGists' /> : <Login />
-          }}
-        />
-        <Route
-          exact
-          path={"/register"}
-          render={() => {
-            return userContext.user ? (
-              <Redirect to='/viewGists' />
-            ) : (
-              <Register />
-            )
-          }}
-        />
-        <Route exact path={"/editGist/:id"} component={AddGist} />
-        <Route exact path={"/viewGist/:id"} component={ViewGist} />
-        <Route exact path={"/"} component={HomePage} />
-        <Route exact path={"/viewGists"} component={ViewGistsPage} />
-      </Switch>
+      <div>
+        <NavbarComponent></NavbarComponent>
+        <Switch>
+          <Route
+            exact
+            path={"/login"}
+            render={() => {
+              return userContext.user ? <Redirect to='/viewGists' /> : <Login />
+            }}
+          />
+          <Route
+            exact
+            path={"/register"}
+            render={() => {
+              return userContext.user ? (
+                <Redirect to='/viewGists' />
+              ) : (
+                <Register />
+              )
+            }}
+          />
+          <Route exact path={"/editGist/:id"} component={AddGist} />
+          <Route exact path={"/viewGist/:id"} component={ViewGist} />
+          <Route exact path={"/"} component={HomePage} />
+          <Route exact path={"/viewGists"} component={ViewGistsPage} />
+          <Route exact path={"/no"} component={NotAllowedPage} />
+
+        </Switch>
+      </div>
     </Router>
   )
 }
