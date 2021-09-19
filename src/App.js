@@ -57,7 +57,7 @@ function App() {
           />
           <Route exact path={"/editGist/:id"} component={AddGist} />
           <Route exact path={"/viewGist/:id"} component={ViewGist} />
-          <Route exact path={"/"} component={HomePage} />
+          <Route exact path={"/"} component={userContext.user ? ViewGistsPage : HomePage} />
           <Route exact path={"/viewGists"} component={ViewGistsPage} />
         </Switch>
       </div>
