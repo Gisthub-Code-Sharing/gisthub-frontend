@@ -17,7 +17,7 @@ import ErrorPage from './ErrorPage';
 
 function AddGist() {
     const [open, setOpen] = useState(false);
-    const [items, setItems] = useState([{ type: "Code", payload: "let" }, { type: "Text", payload: "" }]) // {type: "Code" or "Text", payload: string, language: string} 
+    const [items, setItems] = useState() // {type: "Code" or "Text", payload: string, language: string} 
     // TODO: Add different language support
     const [title, setTitle] = useState("");
     const [permissions, setPermissions] = useState([]);
@@ -33,6 +33,7 @@ function AddGist() {
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
                 setPermissions(gist.permissions || []);
+                setIsPrivate(gist.isPrivate);
             }).catch(err => { console.log(err); setError(err.response.status); })
         }
     }, [id])
@@ -72,16 +73,15 @@ function AddGist() {
                     <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave} style={{ marginLeft: 10 }}>
                         Save
                     </Button>
-                    <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    >
-                        <ShareModal isPrivate={isPrivate} setIsPrivate={setIsPrivate} invited={permissions} setInvited={setPermissions} />
-                    </Modal>
                 </div>
-
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <ShareModal isPrivate={isPrivate} setIsPrivate={setIsPrivate} invited={permissions} setInvited={setPermissions} />
+                </Modal>
                 {
                     items.map((item, index) => {
                         const { type, payload } = item
