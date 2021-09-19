@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, {useContext} from "react"
 import AppBar from "@mui/material/AppBar"
 import Box from "@mui/material/Box"
 import Toolbar from "@mui/material/Toolbar"
@@ -8,8 +8,19 @@ import IconButton from "@mui/material/IconButton"
 import MenuIcon from "@mui/icons-material/Menu"
 import { Link } from "react-router-dom"
 import AddIcon from "@mui/icons-material/Add"
+import axios from 'axios';
+import {UserContext} from '../contexts/UserContext';
+import {useHistory} from 'react-router-dom';
 
 export default function NavbarComponent({ isLoggedIn, drawerWidth }) {
+  const [userContext, setUserContext] = useContext(UserContext);
+  const history = useHistory();
+
+  const handleAddGist = () => {
+    axios.post('https://gisthub-backend.herokuapp.com/createGist', {user: userContext.user}).then(resp => {
+      history.push('/editGist/' + resp.data.id);
+    }).catch(err => console.log(err))
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -30,9 +41,9 @@ export default function NavbarComponent({ isLoggedIn, drawerWidth }) {
           {isLoggedIn ? (
             <>
               <Button color='inherit'>View my gists</Button>
-              <Link to='/add'>
-                <AddIcon style={{ marginLeft: "1rem" }} />
-              </Link>
+              <IconButton onClick={handleAddGist}>
+                <AddIcon />
+              </IconButton>
             </>
           ) : (
             <Link to='/login'>

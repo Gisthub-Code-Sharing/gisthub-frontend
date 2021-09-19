@@ -55,7 +55,7 @@ function App() {
             )
           }}
         />
-        <Route exact path={"/code"} component={AddGist} />
+        <Route exact path={"/editGist/:id"} component={AddGist} />
 
         <Route exact path={"/"} component={HomePage} />
         <Route exact path={"/viewGists"} component={ViewGistsPage} />
