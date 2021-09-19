@@ -32,7 +32,7 @@ function sleep(delay = 0) {
 }
 
 function PrivateShareModal(props) {
-    const { invited, setInvited } = props;
+    const { invited, setInvited, isPrivate, setIsPrivate } = props;
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
     const loading = open && options.length === 0;
@@ -42,6 +42,11 @@ function PrivateShareModal(props) {
     const handleAddInvite = (userName) => {
         axios.post('https://gisthub-backend.herokuapp.com/updateGist', {permissions: [...invited, userName], user: userContext.user, gistId: id}).then(response => console.log(response)).catch(err => console.log(err))
         setInvited(invited.concat(userName));
+    }
+
+    const handleMakePublic = () => {
+        axios.post('https://gisthub-backend.herokuapp.com/updateGist', {isPrivate: false, user: userContext.user, gistId: id}).then(response => console.log(response)).catch(err => console.log(err))
+        setIsPrivate(false);
     }
 
     useEffect(() => {
@@ -122,8 +127,8 @@ function PrivateShareModal(props) {
                         </IconButton>
                     </div>))}
             </List>
-            <Button variant="outlined" onClick={() => navigator.clipboard.writeText(window.location.href)}>Get link</Button>
-            <Button variant="outlined" style={{marginLeft: 10}}>Make public</Button>
+            <Button variant="outlined" onClick={() => navigator.clipboard.writeText('http://localhost:3000/viewGist/' + id)}>Get link</Button>
+            <Button variant="outlined" style={{marginLeft: 10}} onClick={handleMakePublic}>Make public</Button>
         </Paper >
     )
 }
