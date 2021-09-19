@@ -35,7 +35,7 @@ function PublicShareModal({ setIsPrivate }) {
         < Paper sx={{ ...style }
         } >
             <Typography>Your gist is currently visible to < b > everyone.</b ></Typography>
-            <Button variant="outlined" onClick={() => navigator.clipboard.writeText('http://localhost:3000/viewGist/' + id)} style={{ marginTop: 20 }}>Get link</Button>
+            <Button variant="outlined" onClick={() => navigator.clipboard.writeText('https://gisthub-rho.vercel.app/viewGist/' + id)} style={{ marginTop: 20 }}>Get link</Button>
             <Button variant="outlined" onClick={handleMakePrivate} style={{ marginLeft: 10, marginTop: 20 }}>Make private</Button>
         </Paper >
     )
