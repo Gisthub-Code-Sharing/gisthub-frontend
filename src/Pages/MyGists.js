@@ -7,7 +7,8 @@ import {
   CardActionArea,
   CardActions,
   Button,
-  Tab
+  Tab,
+  Tabs
 } from "@mui/material"
 import axios from "axios"
 import { UserContext } from "../contexts/UserContext"
@@ -69,6 +70,10 @@ export default function ViewGistsPage() {
       })
   }, [])
 
+  const handleChange = (event, newValue) => {
+    setSharedWithMe(Boolean(newValue));
+  };
+
   return (
     <>
       <div style={{ display: "flex", height: "100vh" }}>
@@ -104,7 +109,11 @@ export default function ViewGistsPage() {
             borderRadius: 0,
           }}
         >
-          {!sharedWithMe && (
+          <Tabs value={Number(sharedWithMe)} onChange={handleChange} aria-label="basic tabs example">
+            <Tab label="My gists" value={0} />
+            <Tab label="Shared with me" value={1} />
+          </Tabs>
+          {/* {!sharedWithMe && (
             <>
               <Typography display="inline" variant='h4' sx={{ textTransform: "none" }}>My gists / </Typography>
               <Link onClick={() => setSharedWithMe(true)}>
@@ -119,9 +128,7 @@ export default function ViewGistsPage() {
               </Link>
               <Typography display="inline" variant='h4' sx={{ textTransform: "none" }}> / Shared with me</Typography>
             </>
-          )}
-          {/* <Button variant="outlined" disabled={!sharedWithMe} onClick={() => setSharedWithMe(false)}> <Typography variant='h4' sx={{ textTransform: "none" }}>My gists</Typography></Button><Typography variant='h4' sx={{ display: "inline" }}>/</Typography>
-          <Button variant="outlined" disabled={sharedWithMe} onClick={() => setSharedWithMe(true)}><Typography variant='h4' sx={{ textTransform: "none" }}>Shared with me</Typography></Button> */}
+          )} */}
 
           {sharedWithMe && sharedData.map((gist) => (
             <Card variant='outlined' style={{ margin: "10px" }}>
