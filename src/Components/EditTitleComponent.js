@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import TextField from '@mui/material/TextField';
 
-function TitleComponent() {
-    const [title, setTitle] = useState("");
-
+function TitleComponent({title, setTitle}) {
     const handleChange = (event) => {
         setTitle(event.target.value);
     };

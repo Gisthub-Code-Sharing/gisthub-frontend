@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 
-function TextComponent() {
+function TextComponent({payload, onTextChange}) {
     return (
         <div style={{ padding: "10px 0px" }}>
             <TextField
@@ -10,6 +10,8 @@ function TextComponent() {
                 id="standard-textarea"
                 multiline
                 size="small"
+                value={payload}
+                onChange={event => onTextChange(event.target.value)}
             />
         </div>
     )

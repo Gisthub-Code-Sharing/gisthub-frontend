@@ -11,18 +11,18 @@ import axios from "axios";
 function App() {
   const [userContext, setUserContext] = useContext(UserContext);
 
-  const UNAUTHORIZED = 401;
-  axios.interceptors.response.use(
-    response => response,
-    error => {
-      const { status } = error.response;
-      if (status === UNAUTHORIZED) {
-        setUserContext({ user: undefined });
-        window.reload();
-      }
-      return Promise.reject(error);
-    }
-  );
+  // const UNAUTHORIZED = 401;
+  // axios.interceptors.response.use(
+  //   response => response,
+  //   error => {
+  //     const { status } = error.response;
+  //     if (status === UNAUTHORIZED) {
+  //       setUserContext({ user: undefined });
+  //       window.reload();
+  //     }
+  //     return Promise.reject(error);
+  //   }
+  // );
   return (
     <Router>
       <Switch>
