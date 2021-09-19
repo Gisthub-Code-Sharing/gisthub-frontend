@@ -4,9 +4,9 @@ import { Paper, Typography, Button } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import {UserContext} from '../contexts/UserContext';
+import { UserContext } from '../contexts/UserContext';
 
 const style = {
     position: 'absolute',
@@ -22,12 +22,12 @@ const style = {
     borderRadius: 3
 };
 
-function PublicShareModal({setIsPrivate}) {
-    const {id} = useParams();
+function PublicShareModal({ setIsPrivate }) {
+    const { id } = useParams();
     const [userContext, setUserContext] = useContext(UserContext);
 
     const handleMakePrivate = () => {
-        axios.post('https://gisthub-backend.herokuapp.com/updateGist', {isPrivate: true, user: userContext.user, gistId: id}).then(response => console.log(response)).catch(err => console.log(err))
+        axios.post('https://gisthub-backend.herokuapp.com/updateGist', { isPrivate: true, user: userContext.user, gistId: id }).then(response => console.log(response)).catch(err => console.log(err))
         setIsPrivate(true);
     }
 
@@ -35,8 +35,8 @@ function PublicShareModal({setIsPrivate}) {
         < Paper sx={{ ...style }
         } >
             <Typography>Your gist is currently visible to < b > everyone.</b ></Typography>
-            <Button variant="outlined" onClick={() => navigator.clipboard.writeText('http://localhost:3000/viewGist/' + id)} style={{marginTop: 20}}>Get link</Button>
-            <Button variant="outlined" onClick={handleMakePrivate} style={{marginLeft: 10, marginTop: 20}}>Make private</Button>
+            <Button variant="outlined" onClick={() => navigator.clipboard.writeText('http://localhost:3000/viewGist/' + id)} style={{ marginTop: 20 }}>Get link</Button>
+            <Button variant="outlined" onClick={handleMakePrivate} style={{ marginLeft: 10, marginTop: 20 }}>Make private</Button>
         </Paper >
     )
 }

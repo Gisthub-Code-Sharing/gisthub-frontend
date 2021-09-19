@@ -6,13 +6,14 @@ import ViewTitle from '../Components/ViewTitleComponent';
 import { Button } from '@mui/material';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import CodeIcon from '@mui/icons-material/Code';
-import SaveIcon from '@mui/icons-material/Save';
+import EditIcon from '@mui/icons-material/Edit';
 import ShareModal from '../Components/ShareModal';
 import Modal from '@mui/material/Modal';
 import axios from 'axios';
 import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
 import ErrorPage from './ErrorPage';
+import ShareIcon from '@mui/icons-material/Share';
 
 function ViewGist() {
     const [open, setOpen] = useState(false);
@@ -22,6 +23,9 @@ function ViewGist() {
     const [userContext, setUserContext] = useContext(UserContext);
     const { id } = useParams();
     const [error, setError] = useState(false);
+    const [owner, setOwner] = useState(false);
+    const [isPrivate, setIsPrivate] = useState(true);
+    const [permissions, setPermissions] = useState([]);
 
     const handleClose = () => setOpen(false);
 
@@ -48,6 +52,9 @@ function ViewGist() {
                 let { gist } = response.data;
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
+                setOwner(userContext.user.id === gist.owner.toString());
+                setIsPrivate(gist.isPrivate);
+                setPermissions(gist.permissions || []);
             }).catch(err => { console.log(err); setError(err.response.status); })
         }
     }, [id])
@@ -57,7 +64,23 @@ function ViewGist() {
             (<div style={{ margin: 50 }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <ViewTitle title={title}></ViewTitle>
-                    {/* TODO: Add an edit button to move to AddGist page if owner */}
+                    {owner && (
+                        <>
+                            <Button variant="contained" startIcon={<ShareIcon />} onClick={() => setOpen(true)}>
+                                Share
+                            </Button>
+                            <Button href={`/editGist/${id}`} variant="contained" startIcon={<EditIcon />} style={{ marginLeft: 10 }}>
+                                Edit
+                            </Button>
+                            <Modal
+                                open={open}
+                                onClose={handleClose}
+                                aria-labelledby="modal-modal-title"
+                                aria-describedby="modal-modal-description"
+                            >
+                                <ShareModal isPrivate={isPrivate} setIsPrivate={setIsPrivate} invited={permissions} setInvited={setPermissions} />
+                            </Modal>
+                        </>)}
                 </div>
 
                 {
@@ -70,10 +93,6 @@ function ViewGist() {
                         }
                     })
                 }
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button variant="contained" startIcon={<TextFieldsIcon />} onClick={addText}>Add Text</Button>
-                    <Button variant="contained" startIcon={<CodeIcon />} style={{ marginLeft: 20 }} onClick={addCode}>Add Code</Button>
-                </div>
             </div>)
     )
 }
