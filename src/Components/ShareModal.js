@@ -3,11 +3,11 @@ import PrivateShareModal from "./PrivateShareModal";
 import PublicShareModal from "./PublicShareModal";
 
 function ShareModal(props) {
-    const { isPrivate, invited } = props;
+    const { isPrivate, invited, setInvited } = props;
 
     return (
         < React.Fragment >
-            {isPrivate ? (<PrivateShareModal invited={invited} />) : (<PublicShareModal />)}
+            {isPrivate ? (<PrivateShareModal invited={invited} setInvited={setInvited}/>) : (<PublicShareModal />)}
         </ React.Fragment >
     );
 };

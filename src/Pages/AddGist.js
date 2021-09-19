@@ -18,6 +18,7 @@ function AddGist() {
     const [items, setItems] = useState([{type: "Code", payload: "let"}, {type: "Text", payload: ""}]) // {type: "Code" or "Text", payload: string, language: string} 
     // TODO: Add different language support
     const [title, setTitle] = useState("");
+    const [permissions, setPermissions] = useState([])
     const [userContext, setUserContext] = useContext(UserContext);
     const {id} = useParams();
 
@@ -27,6 +28,7 @@ function AddGist() {
                 let {gist} = response.data;
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
+                setPermissions(gist.permissions || []);
             }).catch(err => console.log(err))
         }
     }, [id])
@@ -70,7 +72,7 @@ function AddGist() {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <ShareModal isPrivate={true} invited={['invited1', 'invited2']} />
+                    <ShareModal isPrivate={true} invited={permissions} setInvited={setPermissions}/>
                 </Modal>
             </div>
 

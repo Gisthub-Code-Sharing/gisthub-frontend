@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Paper, Typography, Button, List, IconButton } from '@mui/material';
@@ -6,6 +6,9 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteIcon from '@mui/icons-material/Delete';
+import axios from 'axios';
+import {UserContext} from '../contexts/UserContext';
+import {useParams} from 'react-router-dom';
 
 const style = {
     position: 'absolute',
@@ -29,10 +32,23 @@ function sleep(delay = 0) {
 }
 
 function PrivateShareModal(props) {
-    const { invited } = props;
+    const { invited, setInvited } = props;
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
     const loading = open && options.length === 0;
+    const [userContext, setUserContext] = useContext(UserContext);
+    const {id} = useParams();
+
+    const handleAddInvite = (userName) => {
+        axios.post('https://gisthub-backend.herokuapp.com/updateGist', {permissions: [...invited, userName], user: userContext.user, gistId: id}).then(response => console.log(response)).catch(err => console.log(err))
+        setInvited(invited.concat(userName));
+    }
+
+    useEffect(() => {
+        axios.post('https://gisthub-backend.herokuapp.com/getAllUsers').then(response => {
+            setOptions(response.data.users);
+        }).catch(err => console.log(err));
+    }, [])
 
     useEffect(() => {
         let active = true;
@@ -63,7 +79,7 @@ function PrivateShareModal(props) {
                 paddingBottom: '10px'
             }}>
                 <PersonAddIcon fontSize="large" style={{ paddingRight: 10 }} />
-                <Typography variant="h5"> Share with people</Typography>
+                <Typography variant="h5">Share with people</Typography>
             </div>
             <Autocomplete
                 id="asynchronous-demo"
@@ -78,6 +94,8 @@ function PrivateShareModal(props) {
                 // isOptionEqualToValue={(option, value) => option.title === value.title}
                 // getOptionLabel={(option) => option.title}
                 options={options}
+                ListboxProps={{onClick: (evt) => {handleAddInvite(evt.target.textContent)}}}
+                getOptionLabel={(option) => option.userName}
                 loading={loading}
                 renderInput={(params) => (
                     <TextField
@@ -105,7 +123,7 @@ function PrivateShareModal(props) {
                     </div>))}
             </List>
             <Button variant="outlined" onClick={() => navigator.clipboard.writeText(window.location.href)}>Get link</Button>
-            <Button variant="outlined">Make public</Button>
+            <Button variant="outlined" style={{marginLeft: 10}}>Make public</Button>
         </Paper >
     )
 }
