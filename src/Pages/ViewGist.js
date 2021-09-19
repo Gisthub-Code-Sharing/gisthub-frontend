@@ -6,13 +6,14 @@ import ViewTitle from '../Components/ViewTitleComponent';
 import { Button } from '@mui/material';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import CodeIcon from '@mui/icons-material/Code';
-import SaveIcon from '@mui/icons-material/Save';
+import EditIcon from '@mui/icons-material/Edit';
 import ShareModal from '../Components/ShareModal';
 import Modal from '@mui/material/Modal';
 import axios from 'axios';
 import { UserContext } from '../contexts/UserContext';
 import { useParams } from 'react-router-dom';
 import ErrorPage from './ErrorPage';
+import ShareIcon from '@mui/icons-material/Share';
 
 function ViewGist() {
     const [open, setOpen] = useState(false);
@@ -22,6 +23,7 @@ function ViewGist() {
     const [userContext, setUserContext] = useContext(UserContext);
     const { id } = useParams();
     const [error, setError] = useState(false);
+    const [owner, setOwner] = useState(false);
 
     const handleClose = () => setOpen(false);
 
@@ -48,6 +50,7 @@ function ViewGist() {
                 let { gist } = response.data;
                 setTitle(gist.title || "");
                 setItems(gist.content || []);
+                setOwner(userContext.user.id === gist.owner.toString());
             }).catch(err => { console.log(err); setError(err.response.status); })
         }
     }, [id])
@@ -57,6 +60,15 @@ function ViewGist() {
             (<div style={{ margin: 50 }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <ViewTitle title={title}></ViewTitle>
+                    {owner && (
+                        <>
+                            <Button variant="contained" startIcon={<ShareIcon />} onClick={() => setOpen(true)}>
+                                Share
+                            </Button>
+                            <Button href={`/editGist/${id}`} variant="contained" startIcon={<EditIcon />} style={{ marginLeft: 10 }}>
+                                Edit
+                            </Button>
+                        </>)}
                     {/* TODO: Add an edit button to move to AddGist page if owner */}
                 </div>
 

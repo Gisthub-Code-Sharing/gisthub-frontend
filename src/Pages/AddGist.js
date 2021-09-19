@@ -72,16 +72,15 @@ function AddGist() {
                     <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave} style={{ marginLeft: 10 }}>
                         Save
                     </Button>
-                    <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    >
-                        <ShareModal isPrivate={isPrivate} setIsPrivate={setIsPrivate} invited={permissions} setInvited={setPermissions} />
-                    </Modal>
                 </div>
-
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <ShareModal isPrivate={isPrivate} setIsPrivate={setIsPrivate} invited={permissions} setInvited={setPermissions} />
+                </Modal>
                 {
                     items.map((item, index) => {
                         const { type, payload } = item
